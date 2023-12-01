@@ -1,4 +1,4 @@
-use regex::Regex;
+use std::collections::HashMap;
 
 fn main() {
     let path = format!("{}/input", env!("CARGO_MANIFEST_DIR"));
@@ -24,40 +24,55 @@ fn part_one(input: &[String]) -> i32 {
 }
 
 fn part_two(input: &[String]) -> i32 {
-    let regex = Regex::new(
-        r"oneight|threeight|nineight|twone|fiveight|eighthree|eightwo|sevenine|one|two|three|four|five|six|seven|eight|nine",
-    )
-    .unwrap();
+    let numbers: HashMap<&str, &str> = HashMap::from([
+        ("one", "1"),
+        ("two", "2"),
+        ("three", "3"),
+        ("four", "4"),
+        ("five", "5"),
+        ("six", "6"),
+        ("seven", "7"),
+        ("eight", "8"),
+        ("nine", "9"),
+        ("1", "1"),
+        ("2", "2"),
+        ("3", "3"),
+        ("4", "4"),
+        ("5", "5"),
+        ("6", "6"),
+        ("7", "7"),
+        ("8", "8"),
+        ("9", "9"),
+    ]);
 
-    let a: Vec<String> = input
+    let shizzness: Vec<String> = input
         .into_iter()
         .map(|line| {
-            let v = regex.replace_all(line, |captures: &regex::Captures| {
-                match captures.get(0).map_or("", |m| m.as_str()) {
-                    "oneight" => "18",
-                    "threeight" => "38",
-                    "nineight" => "98",
-                    "twone" => "21",
-                    "fiveight" => "58",
-                    "eighthree" => "83",
-                    "eightwo" => "82",
-                    "sevenine" => "79",
-                    "one" => "1",
-                    "two" => "2",
-                    "three" => "3",
-                    "four" => "4",
-                    "five" => "5",
-                    "six" => "6",
-                    "seven" => "7",
-                    "eight" => "8",
-                    "nine" => "9",
-                    _ => "",
-                }
-            });
+            let keys = numbers
+                .keys()
+                .map(|a| a.to_string())
+                .collect::<Vec<String>>();
 
-            v.to_string()
+            let first_match = keys
+                .iter()
+                .filter_map(|s| line.find(s).map(|index| (s, index)))
+                .min_by_key(|&(_, index)| index)
+                .map(|(s, _)| String::from(s))
+                .unwrap()
+                .to_string();
+
+            let last_match = keys
+                .iter()
+                .filter_map(|s| line.rfind(s).map(|index| (s, index)))
+                .max_by_key(|&(_, index)| index)
+                .map(|(s, _)| String::from(s))
+                .unwrap()
+                .to_string();
+
+            numbers.get(first_match.as_str()).unwrap().to_string()
+                + numbers.get(last_match.as_str()).unwrap()
         })
         .collect();
 
-    part_one(&a)
+    part_one(&shizzness)
 }
