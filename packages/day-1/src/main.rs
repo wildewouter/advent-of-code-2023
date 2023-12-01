@@ -58,16 +58,14 @@ fn part_two(input: &[String]) -> i32 {
                 .filter_map(|s| line.find(s).map(|index| (s, index)))
                 .min_by_key(|&(_, index)| index)
                 .map(|(s, _)| String::from(s))
-                .unwrap()
-                .to_string();
+                .unwrap();
 
             let last_match = keys
                 .iter()
                 .filter_map(|s| line.rfind(s).map(|index| (s, index)))
                 .max_by_key(|&(_, index)| index)
                 .map(|(s, _)| String::from(s))
-                .unwrap()
-                .to_string();
+                .unwrap();
 
             numbers.get(first_match.as_str()).unwrap().to_string()
                 + numbers.get(last_match.as_str()).unwrap()
