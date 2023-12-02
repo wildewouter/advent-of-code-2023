@@ -11,6 +11,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "advent-of-code-2023-day-2"
+version = "0.1.0"
+dependencies = [
+ "itertools",
+ "read",
+]
+
+[[package]]
 name = "either"
 version = "1.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
