@@ -63,5 +63,11 @@ fn main() {
             })
             .sum::<i32>()
     );
-    // println!("Part two: {}", part_two(&input));
+    println!(
+        "Part two: {}",
+        games
+            .iter()
+            .map(|(_, cubes)| { cubes.values().fold(1, |acc, next| acc * next) })
+            .sum::<i32>()
+    );
 }
