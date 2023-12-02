@@ -42,7 +42,7 @@ fn main() {
 
     let rules: HashMap<&str, i32> = HashMap::from([("red", 12), ("green", 13), ("blue", 14)]);
 
-    println!("Day One");
+    println!("Day Two");
     println!(
         "Part one: {}",
         games
