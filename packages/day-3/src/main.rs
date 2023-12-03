@@ -14,14 +14,10 @@ fn main() {
 
     let not_symbol = Regex::new(r"[0-9]|\.").unwrap();
 
-    let mut engine_parts: Vec<i32> = Vec::new();
-
-    engine
+    let parts_per_position: Vec<HashSet<i32>> = engine
         .iter()
         .filter(|(_, char)| !not_symbol.is_match(&char.to_string()))
-        .for_each(|((x, y), _)| {
-            let mut single: HashSet<i32> = HashSet::new();
-
+        .map(|((x, y), _)| {
             [
                 &(x - 1, *y),
                 &(x + 1, *y),
@@ -34,15 +30,30 @@ fn main() {
             ]
             .iter()
             .filter_map(|coordinates| get_number_from_coordinate(&engine, &coordinates))
-            .for_each(|a| {
-                single.insert(a);
-            });
+            .fold(HashSet::new(), |mut parts_for_position, next| {
+                parts_for_position.insert(next);
 
-            single.iter().for_each(|v| engine_parts.push(*v));
-        });
+                parts_for_position
+            })
+        })
+        .collect();
 
     println!("Day three");
-    println!("Part one: {}", engine_parts.iter().sum::<i32>());
+    println!(
+        "Part one: {}",
+        parts_per_position
+            .iter()
+            .map(|set| set.iter().sum::<i32>())
+            .sum::<i32>()
+    );
+    println!(
+        "Part two: {}",
+        parts_per_position
+            .iter()
+            .filter(|set| set.len() == 2)
+            .map(|set| set.iter().fold(1, |acc, &part| acc * part))
+            .sum::<i32>()
+    );
 }
 
 fn get_number_from_coordinate(
