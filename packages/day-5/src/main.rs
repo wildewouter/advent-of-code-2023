@@ -1,7 +1,8 @@
+use rayon::prelude::*;
 use std::collections::HashMap;
 
 fn main() {
-    let input = include_str!("input")
+    let input = include_str!("input-example")
         .splitn(2, "\n\n")
         .collect::<Vec<&str>>();
 
@@ -9,6 +10,11 @@ fn main() {
         .split_whitespace()
         .map(|s| s.parse::<i64>().unwrap())
         .collect();
+
+    let seed_pairs = seeds
+        .chunks(2)
+        .map(|chunk| (chunk[0], chunk[1]))
+        .collect::<Vec<(i64, i64)>>();
 
     let maps: HashMap<(String, String), Vec<(i64, i64, i64)>> =
         input.get(1).unwrap().split("\n\n").fold(
@@ -54,6 +60,16 @@ fn main() {
             .min()
             .unwrap()
     );
+
+    println!(
+        "Part two: {}",
+        &seed_pairs
+            .into_par_iter()
+            .flat_map(|(start, end)| start..(start + end))
+            .map(|seed| go_to_location("seed", &seed, &maps))
+            .min()
+            .unwrap()
+    );
 }
 
 fn go_to_location(
@@ -85,5 +101,5 @@ fn go_to_location(
         );
     }
 
-    *next_number.get(0).unwrap_or_else(|| number)
+    *next_number.first().unwrap_or_else(|| number)
 }
