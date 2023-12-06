@@ -85,7 +85,7 @@ fn go_to_location(
     let next_number = ranges
         .iter()
         .filter_map(|(destination, source, range)| {
-            if number >= source && number <= &(source + range) {
+            if number >= source && number < &(source + range) {
                 return Some(number - source + destination);
             }
 
