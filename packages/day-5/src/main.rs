@@ -2,7 +2,7 @@ use rayon::prelude::*;
 use std::collections::HashMap;
 
 fn main() {
-    let input = include_str!("input-example")
+    let input = include_str!("input")
         .splitn(2, "\n\n")
         .collect::<Vec<&str>>();
 
