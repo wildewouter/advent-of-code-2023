@@ -1,15 +1,21 @@
+use num::Integer;
+use rayon::prelude::*;
 use regex::Regex;
 use std::collections::HashMap;
 
 fn main() {
-    let _example_moves = "LLR".chars().map(|a| a.to_string()).collect::<Vec<_>>();
+    let _example_moves = "LR".chars().collect::<Vec<_>>();
     let moves = "LLRLLRRLRLRRRLRRLLRRRLRLRLRRLRRRLRRLRLRLLRLLLRRRLRRLRRRLRRRLRRRLRLRRLLRRLRRLRRLRRRLRLRRRLLRLRRLRRRLRLRRRLRRRLRLRRRLLRRRLRRRLRLRRLRLRRRLLRRLRRLRRLRRLRLRLRRRLLRRRLRRLRRRLRLRLRRRLLRLRRLLRLRRLRLRRRLRLRRLLRRRLLRRLRLRLLRLLRRLRRLLRRLRLRRLRLRLRRRLRRLRLLLLRRLRLRLRRRLLLRRRLRRLRRLRLLRLRRRLLLRRRLRRRLRRRR".chars().collect::<Vec<_>>();
 
     let input = include_str!("input");
 
-    let nodes = input.lines().map(|line| Node::new(line).unwrap()).fold(
+    let all_nodes = input
+        .lines()
+        .map(|line| Node::new(line).unwrap())
+        .collect::<Vec<_>>();
+    let node_map = (&all_nodes).iter().fold(
         HashMap::new(),
-        |mut result: HashMap<String, Node>, node| {
+        |mut result: HashMap<String, &Node>, node| {
             result.insert(node.name.to_string(), node);
             result
         },
@@ -18,37 +24,48 @@ fn main() {
     println!("Day 8");
     println!(
         "Part one: {}",
-        &get_number_of_moves_until(|dest| dest == "ZZZ", &moves, nodes)
+        &get_number_of_moves_until("AAA", |dest| dest == "ZZZ", &moves, &node_map)
     );
-    println!("Part two: {}", "");
+    let shortest_to_z = (&all_nodes)
+        .into_par_iter()
+        .filter(|node| node.name.ends_with('Z'))
+        .map(|node| {
+            get_number_of_moves_until(&node.name, |dest| dest.ends_with('Z'), &moves, &node_map)
+        })
+        .collect::<Vec<_>>();
+    println!(
+        "Part two: {}",
+        shortest_to_z.iter().fold(1, |acc, &next| acc.lcm(&next))
+    );
 }
 
 fn get_number_of_moves_until(
+    start: &str,
     is_at_destination: fn(&str) -> bool,
     directions: &[char],
-    nodes: HashMap<String, Node>,
-) -> i32 {
+    node_map: &HashMap<String, &Node>,
+) -> i64 {
     let mut is_at_z = false;
-    let mut next = String::from("AAA");
+    let mut next = start;
 
     let mut count = 0;
 
     while !is_at_z {
         for direction in directions {
-            if is_at_destination(&next) {
-                is_at_z = true;
-                break;
-            }
-
-            let node = nodes.get(&next).unwrap();
+            let node = node_map.get(next).unwrap();
 
             next = match direction {
-                'L' => node.left.to_string(),
-                'R' => node.right.to_string(),
+                'L' => node.left.as_str(),
+                'R' => node.right.as_str(),
                 _ => panic!("AAAAAAAAAAAAAAH"),
             };
 
             count += 1;
+
+            if is_at_destination(next) {
+                is_at_z = true;
+                break;
+            }
         }
     }
     count
