@@ -10,7 +10,24 @@ fn main() {
         })
         .collect::<Vec<_>>();
 
-    let ans = input
+    println!("Day 9");
+
+    println!("Part one: {}", &sequence_it(&input).iter().sum::<isize>());
+    println!(
+        "Part two: {}",
+        &sequence_it(
+            &input
+                .iter()
+                .map(|seq| seq.iter().rev().cloned().collect::<Vec<_>>())
+                .collect::<Vec<_>>()
+        )
+        .iter()
+        .sum::<isize>()
+    );
+}
+
+fn sequence_it(input: &[Vec<isize>]) -> Vec<isize> {
+    input
         .par_iter()
         .map(|next_sequence| {
             let mut sequences: Vec<Vec<isize>> = vec![next_sequence.clone()];
@@ -37,10 +54,5 @@ fn main() {
                 .iter()
                 .fold(0, |acc, next| acc + next.last().unwrap_or(&0))
         })
-        .collect::<Vec<_>>();
-
-    println!("Day 9");
-
-    println!("Part one: {}", &ans.iter().sum::<isize>());
-    println!("Part two: {}", "");
+        .collect::<Vec<_>>()
 }
