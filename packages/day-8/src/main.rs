@@ -13,7 +13,7 @@ fn main() {
         .lines()
         .map(|line| Node::new(line).unwrap())
         .collect::<Vec<_>>();
-    let node_map = (&all_nodes).iter().fold(
+    let node_map = all_nodes.iter().fold(
         HashMap::new(),
         |mut result: HashMap<String, &Node>, node| {
             result.insert(node.name.to_string(), node);
@@ -26,8 +26,8 @@ fn main() {
         "Part one: {}",
         &get_number_of_moves_until("AAA", |dest| dest == "ZZZ", &moves, &node_map)
     );
-    let shortest_to_z = (&all_nodes)
-        .into_par_iter()
+    let shortest_to_z = all_nodes
+        .par_iter()
         .filter(|node| node.name.ends_with('Z'))
         .map(|node| {
             get_number_of_moves_until(&node.name, |dest| dest.ends_with('Z'), &moves, &node_map)
