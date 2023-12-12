@@ -44,7 +44,7 @@ fn get_number_of_moves_until(
     is_at_destination: fn(&str) -> bool,
     directions: &[char],
     node_map: &HashMap<String, &Node>,
-) -> i64 {
+) -> isize {
     let mut is_at_z = false;
     let mut next = start;
 
