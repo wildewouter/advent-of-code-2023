@@ -3,7 +3,7 @@ use std::collections::HashMap;
 
 fn main() {
     let _example_moves = "LLR".chars().map(|a| a.to_string()).collect::<Vec<_>>();
-    let moves = "LLRLLRRLRLRRRLRRLLRRRLRLRLRRLRRRLRRLRLRLLRLLLRRRLRRLRRRLRRRLRRRLRLRRLLRRLRRLRRLRRRLRLRRRLLRLRRLRRRLRLRRRLRRRLRLRRRLLRRRLRRRLRLRRLRLRRRLLRRLRRLRRLRRLRLRLRRRLLRRRLRRLRRRLRLRLRRRLLRLRRLLRLRRLRLRRRLRLRRLLRRRLLRRLRLRLLRLLRRLRRLLRRLRLRRLRLRLRRRLRRLRLLLLRRLRLRLRRRLLLRRRLRRLRRLRLLRLRRRLLLRRRLRRRLRRRR".chars().map(|a|a.to_string()).collect::<Vec<_>>();
+    let moves = "LLRLLRRLRLRRRLRRLLRRRLRLRLRRLRRRLRRLRLRLLRLLLRRRLRRLRRRLRRRLRRRLRLRRLLRRLRRLRRLRRRLRLRRRLLRLRRLRRRLRLRRRLRRRLRLRRRLLRRRLRRRLRLRRLRLRRRLLRRLRRLRRLRRLRLRLRRRLLRRRLRRLRRRLRLRLRRRLLRLRRLLRLRRLRLRRRLRLRRLLRRRLLRRLRLRLLRLLRRLRRLLRRLRLRRLRLRLRRRLRRLRLLLLRRLRLRLRRRLLLRRRLRRLRRLRLLRLRRRLLLRRRLRRRLRRRR".chars().collect::<Vec<_>>();
 
     let input = include_str!("input");
 
@@ -15,33 +15,43 @@ fn main() {
         },
     );
 
+    println!("Day 8");
+    println!(
+        "Part one: {}",
+        &get_number_of_moves_until(|dest| dest == "ZZZ", &moves, nodes)
+    );
+    println!("Part two: {}", "");
+}
+
+fn get_number_of_moves_until(
+    is_at_destination: fn(&str) -> bool,
+    directions: &[char],
+    nodes: HashMap<String, Node>,
+) -> i32 {
     let mut is_at_z = false;
     let mut next = String::from("AAA");
 
     let mut count = 0;
 
     while !is_at_z {
-        for mov in &moves {
-            if next == "ZZZ" {
+        for direction in directions {
+            if is_at_destination(&next) {
                 is_at_z = true;
                 break;
             }
 
             let node = nodes.get(&next).unwrap();
 
-            next = match mov.as_str() {
-                "L" => node.left.to_string(),
-                "R" => node.right.to_string(),
-                &_ => panic!("AAAAAAAAAAAAAAH"),
+            next = match direction {
+                'L' => node.left.to_string(),
+                'R' => node.right.to_string(),
+                _ => panic!("AAAAAAAAAAAAAAH"),
             };
 
             count += 1;
         }
     }
-
-    println!("Day 8");
-    println!("Part one: {}", &count);
-    println!("Part two: {}", "");
+    count
 }
 
 #[derive(Clone)]
