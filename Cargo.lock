@@ -11,6 +11,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "advent-of-code-2023-day-10"
+version = "0.1.0"
+dependencies = [
+ "rayon",
+]
+
+[[package]]
 name = "advent-of-code-2023-day-2"
 version = "0.1.0"
 dependencies = [
