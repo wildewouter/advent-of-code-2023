@@ -1,3 +1,5 @@
+use geo::{Contains, Point, Polygon};
+use rayon::prelude::*;
 use std::collections::HashMap;
 
 fn main() {
@@ -55,6 +57,24 @@ fn main() {
 
     println!("Day 10");
     println!("Part one: {}", (positions_of_pipe.len() - 1) / 2);
+    println!("Part two: {}", ray_cast(&pipe_map, &positions_of_pipe));
+}
+
+fn ray_cast(pipe_map: &HashMap<(isize, isize), char>, pipe_coords: &[(isize, isize)]) -> usize {
+    let converted_points: Vec<Point<f64>> = pipe_coords
+        .iter()
+        .map(|(x, y)| Point::new(*x as f64, *y as f64))
+        .collect();
+
+    let poly = Polygon::new(converted_points.into(), vec![]);
+
+    pipe_map
+        .keys()
+        .collect::<Vec<_>>()
+        .par_iter()
+        .filter(|pos| !pipe_coords.contains(pos))
+        .filter(|(x, y)| poly.contains(&Point::new(*x as f64, *y as f64)))
+        .count()
 }
 
 fn get_next_position_in_pipe(
