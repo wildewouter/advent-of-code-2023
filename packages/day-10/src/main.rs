@@ -61,9 +61,9 @@ fn main() {
 }
 
 fn ray_cast(pipe_map: &HashMap<(isize, isize), char>, pipe_coords: &[(isize, isize)]) -> usize {
-    let converted_points: Vec<Point<f64>> = pipe_coords
+    let converted_points: Vec<Point<isize>> = pipe_coords
         .iter()
-        .map(|(x, y)| Point::new(*x as f64, *y as f64))
+        .map(|(x, y)| Point::new(*x, *y))
         .collect();
 
     let poly = Polygon::new(converted_points.into(), vec![]);
@@ -73,7 +73,7 @@ fn ray_cast(pipe_map: &HashMap<(isize, isize), char>, pipe_coords: &[(isize, isi
         .collect::<Vec<_>>()
         .par_iter()
         .filter(|pos| !pipe_coords.contains(pos))
-        .filter(|(x, y)| poly.contains(&Point::new(*x as f64, *y as f64)))
+        .filter(|(x, y)| poly.contains(&Point::new(*x, *y)))
         .count()
 }
 
